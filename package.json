@@ -1,0 +1,30 @@
+{
+  "name": "pm-agent",
+  "version": "0.1.0",
+  "description": "AI-powered Product Manager Agent for Feishu",
+  "type": "module",
+  "main": "dist/index.js",
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "setup-bitable": "tsx scripts/setup-bitable.ts",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "dependencies": {
+    "@larksuiteoapi/node-sdk": "^1.45.0",
+    "@anthropic-ai/sdk": "^0.39.0",
+    "node-cron": "^3.0.3",
+    "dotenv": "^16.4.7",
+    "zod": "^3.24.0",
+    "winston": "^3.17.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.0",
+    "tsx": "^4.19.0",
+    "vitest": "^2.1.0",
+    "@types/node": "^22.0.0",
+    "@types/node-cron": "^3.0.11"
+  }
+}
