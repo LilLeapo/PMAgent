@@ -6,6 +6,7 @@
       "name": "pm-agent",
       "dependencies": {
         "@anthropic-ai/sdk": "^0.39.0",
+        "@larksuite/cli": "^1.0.3",
         "@larksuiteoapi/node-sdk": "^1.45.0",
         "dotenv": "^16.4.7",
         "node-cron": "^3.0.3",
@@ -21,6 +22,9 @@
       },
     },
   },
+  "trustedDependencies": [
+    "@larksuite/cli",
+  ],
   "packages": {
     "@anthropic-ai/sdk": ["@anthropic-ai/sdk@0.39.0", "", { "dependencies": { "@types/node": "^18.11.18", "@types/node-fetch": "^2.6.4", "abort-controller": "^3.0.0", "agentkeepalive": "^4.2.1", "form-data-encoder": "1.7.2", "formdata-node": "^4.3.2", "node-fetch": "^2.6.7" } }, "sha512-eMyDIPRZbt1CCLErRCi3exlAvNkBtRe+kW5vvJyef93PmNr/clstYgHhtvmkxN82nlKgzyGPCyGxrm0JQ1ZIdg=="],
 
@@ -81,6 +85,8 @@
     "@esbuild/win32-x64": ["@esbuild/win32-x64@0.27.5", "", { "os": "win32", "cpu": "x64" }, "sha512-PWypQR+d4FLfkhBIV+/kHsUELAnMpx1bRvvsn3p+/sAERbnCzFrtDRG2Xw5n+2zPxBK2+iaP+vetsRl4Ti7WgA=="],
 
     "@jridgewell/sourcemap-codec": ["@jridgewell/sourcemap-codec@1.5.5", "", {}, "sha512-cYQ9310grqxueWbl+WuIUIaiUaDcj7WOq5fVhEljNVgRfOUhY9fy2zTvfoqWsnebh8Sl70VScFbICvJnLKB0Og=="],
+
+    "@larksuite/cli": ["@larksuite/cli@1.0.3", "", { "os": [ "linux", "win32", "darwin", ], "cpu": [ "x64", "arm64", ], "bin": { "lark-cli": "scripts/run.js" } }, "sha512-6/zEVahnoDyL8ylEOEuW/eXaFwgvtCzIgslKRkX01s/pJl+iXr4+Ycz0ZpqsldGpw3cIdGHxO9xr03o93xY20Q=="],
 
     "@larksuiteoapi/node-sdk": ["@larksuiteoapi/node-sdk@1.60.0", "", { "dependencies": { "axios": "~1.13.3", "lodash.identity": "^3.0.0", "lodash.merge": "^4.6.2", "lodash.pickby": "^4.6.0", "protobufjs": "^7.2.6", "qs": "^6.14.2", "ws": "^8.19.0" } }, "sha512-MS1eXx7K6HHIyIcCBkJLb21okoa8ZatUGQWZaCCUePm6a37RWFmT6ZKlKvHxAanSX26wNuNlwP0RhgscsE+T6g=="],
 

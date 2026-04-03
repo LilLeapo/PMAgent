@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { callLLM } from '../agents/base-agent.js';
+import { chatCompletion } from '../agents/base-agent.js';
 import { INTENT_SYSTEM_PROMPT } from '../agents/prompts/intent-detection.js';
 
 export const IntentSchema = z.object({
@@ -36,10 +36,11 @@ export async function detectIntent(text: string, docUrls: string[]): Promise<Int
     ? `用户消息：${text}\n\n消息中包含的飞书文档链接：${docUrls.join(', ')}`
     : `用户消息：${text}`;
 
-  return callLLM({
-    system: INTENT_SYSTEM_PROMPT,
-    user: prompt,
-    schema: IntentSchema as any,
-    maxTokens: 1024,
-  }) as Promise<Intent>;
+  const res = await chatCompletion([
+    { role: 'system', content: INTENT_SYSTEM_PROMPT },
+    { role: 'user', content: prompt },
+  ], { maxTokens: 1024 });
+
+  const parsed = JSON.parse(res.content || '{}');
+  return IntentSchema.parse(parsed);
 }

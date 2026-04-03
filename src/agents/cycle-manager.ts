@@ -1,4 +1,4 @@
-import { callLLMText } from './base-agent.js';
+import { chatCompletion } from './base-agent.js';
 import { CYCLE_STATUS_SYSTEM_PROMPT, CYCLE_RETRO_SYSTEM_PROMPT } from './prompts/cycle-management.js';
 import * as bitable from '../services/bitable.service.js';
 import { tableIds } from '../repositories/table-ids.js';
@@ -65,10 +65,11 @@ export async function getCycleStatus(cycleRecordId: string): Promise<string> {
       .map(t => ({ title: t.fields['标题'], due: t.fields['截止日期'] })),
   });
 
-  return callLLMText({
-    system: CYCLE_STATUS_SYSTEM_PROMPT,
-    user: data,
-  });
+  const res = await chatCompletion([
+    { role: 'system', content: CYCLE_STATUS_SYSTEM_PROMPT },
+    { role: 'user', content: data },
+  ]);
+  return res.content || '';
 }
 
 export async function closeCycle(cycleRecordId: string): Promise<{ summary: string; movedTasks: number }> {
@@ -99,10 +100,11 @@ export async function closeCycle(cycleRecordId: string): Promise<{ summary: stri
     incomplete_titles: incompleteTasks.map(t => t.fields['标题']),
   });
 
-  const summary = await callLLMText({
-    system: CYCLE_RETRO_SYSTEM_PROMPT,
-    user: data,
-  });
+  const retro = await chatCompletion([
+    { role: 'system', content: CYCLE_RETRO_SYSTEM_PROMPT },
+    { role: 'user', content: data },
+  ]);
+  const summary = retro.content || '';
 
   // Save retro
   await bitable.updateRecord(tableIds.cycles, cycleRecordId, { '回顾': summary });

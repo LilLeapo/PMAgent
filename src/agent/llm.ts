@@ -1,38 +1,11 @@
 import { config } from '../config.js';
 import { logger } from '../utils/logger.js';
+import type { ChatMessage, ToolDef, ToolCall } from './types.js';
 
 const API_URL = (config.ANTHROPIC_BASE_URL || 'https://api.anthropic.com') + '/v1/chat/completions';
-const API_KEY = config.ANTHROPIC_API_KEY;
-
-export interface ToolDefinition {
-  type: 'function';
-  function: {
-    name: string;
-    description: string;
-    parameters: object;
-  };
-}
-
-export interface ToolCall {
-  id: string;
-  type: 'function';
-  function: {
-    name: string;
-    arguments: string;
-  };
-}
-
-export interface ChatMessage {
-  role: 'system' | 'user' | 'assistant' | 'tool';
-  content?: string;
-  tool_calls?: ToolCall[];
-  tool_call_id?: string;
-}
 
 interface ChatCompletionResponse {
-  id: string;
   choices: Array<{
-    index: number;
     message: {
       role: string;
       content: string | null;
@@ -42,28 +15,32 @@ interface ChatCompletionResponse {
   }>;
 }
 
-export async function chatCompletion(
+export interface LLMResponse {
+  content: string | null;
+  toolCalls: ToolCall[];
+  finishReason: string;
+}
+
+export async function callLLM(
   messages: ChatMessage[],
-  opts?: {
-    tools?: ToolDefinition[];
-    maxTokens?: number;
-  },
-): Promise<{ content: string | null; toolCalls: ToolCall[]; finishReason: string }> {
+  tools?: ToolDef[],
+  maxTokens?: number,
+): Promise<LLMResponse> {
   const body: Record<string, unknown> = {
     model: config.LLM_MODEL,
-    max_tokens: opts?.maxTokens || 4096,
+    max_tokens: maxTokens || 4096,
     messages,
   };
 
-  if (opts?.tools && opts.tools.length > 0) {
-    body.tools = opts.tools;
+  if (tools && tools.length > 0) {
+    body.tools = tools;
   }
 
   const res = await fetch(API_URL, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'Authorization': `Bearer ${API_KEY}`,
+      'Authorization': `Bearer ${config.ANTHROPIC_API_KEY}`,
     },
     body: JSON.stringify(body),
   });
@@ -71,7 +48,7 @@ export async function chatCompletion(
   if (!res.ok) {
     const text = await res.text();
     logger.error('LLM API error', { status: res.status, body: text.slice(0, 500) });
-    throw new Error(`LLM API error ${res.status}: ${text.slice(0, 200)}`);
+    throw new Error(`LLM API ${res.status}: ${text.slice(0, 200)}`);
   }
 
   const data = (await res.json()) as ChatCompletionResponse;

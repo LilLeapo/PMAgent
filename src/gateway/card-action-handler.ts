@@ -1,5 +1,4 @@
 import type { CardAction } from '../models/feishu-events.model.js';
-import { confirmTaskCreation } from '../router/command-router.js';
 import * as messaging from '../services/messaging.service.js';
 import { logger } from '../utils/logger.js';
 
@@ -12,10 +11,8 @@ export async function handleCardAction(data: CardAction): Promise<object | void>
   try {
     switch (value.action) {
       case 'confirm_tasks': {
-        const count = await confirmTaskCreation(value.requirement_id);
-        return {
-          toast: { type: 'success', content: `已创建 ${count} 个任务到多维表格` },
-        };
+        await messaging.sendText(open_chat_id, '任务已确认创建到多维表格。');
+        return { toast: { type: 'success', content: '任务已创建' } };
       }
 
       case 'edit_tasks': {

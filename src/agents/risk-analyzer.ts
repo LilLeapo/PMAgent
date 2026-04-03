@@ -1,4 +1,4 @@
-import { callLLMText } from './base-agent.js';
+import { chatCompletion } from './base-agent.js';
 import { RISK_REPORT_SYSTEM_PROMPT } from './prompts/risk-analysis.js';
 import * as bitable from '../services/bitable.service.js';
 import { tableIds } from '../repositories/table-ids.js';
@@ -48,10 +48,11 @@ export async function generateRiskReport(): Promise<string> {
     target_date: r.fields['目标解决日期'],
   })));
 
-  return callLLMText({
-    system: RISK_REPORT_SYSTEM_PROMPT,
-    user: data,
-  });
+  const res = await chatCompletion([
+    { role: 'system', content: RISK_REPORT_SYSTEM_PROMPT },
+    { role: 'user', content: data },
+  ]);
+  return res.content || '';
 }
 
 export async function getRisksNearDeadline(daysAhead: number = 3): Promise<bitable.BitableRecord[]> {
